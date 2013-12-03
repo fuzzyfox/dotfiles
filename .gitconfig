@@ -1,0 +1,10 @@
+[user]
+	name = William Duyck
+	email = fuzzyfox0@gmail.com
+[push]
+	default = simple
+[mergetool "sublime"]
+	cmd = subl -w $MERGED
+	trustExitCode = false
+[merge]
+	tool = sublime
