@@ -23,8 +23,10 @@ set number
 "set undodir=~/.vim/undo
 set autowrite       " automatically save before :next, :make, etc
 
+" enable syntax highlighting
 syntax on
 
+" custom key bindings
 nmap Y y$
 
 nmap <silent> Zz :w<CR>
@@ -32,3 +34,11 @@ nmap <silent> `  :bn<CR>
 nmap <silent> ~  :bp<CR>
 
 " vim: et ts=2
+
+" color scheme setup
+set background=dark
+
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+
+colorscheme solarized

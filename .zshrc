@@ -10,9 +10,19 @@ ZSH_THEME="doubleend"
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-# 
+
 if [ -f "$HOME/.zsh_aliases" ]; then
 	. "$HOME/.zsh_aliases"
+fi
+
+# aliases to quickly connect to remote machines
+if [ -f "$HOME/.zsh_remotes" ]; then
+	. "$HOME/.zsh_remotes"
+fi
+
+# Functions
+if [ -f "$HOME/.zsh_functions" ]; then
+	. "$HOME/.zsh_functions"
 fi
 
 # Set to this to use case-sensitive completion
@@ -44,21 +54,27 @@ fi
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git extract node npm osx sublime terminalapp brew)
+
+plugins=(git extract node npm sublime terminalapp brew osx vagrant gibo)
 
 source $ZSH/oh-my-zsh.sh
 
-# Customize to your needs...
-
-# Make Sublime $EDITOR
+# set sublime as $EDITOR
 export EDITOR='subl -w'
 
-# Add brew autocomplete
-fpath=($HOME/.zsh/func $fpath)
-typeset -U fpath
-
-# Path variable
+# Customize to your needs...
+#export PATH=$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin
 export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 
 # add node modules to path
 export PATH=$PATH:/usr/local/share/npm/bin
+
+# add ruby gems to path
+export PATH=$(brew --prefix ruby)/bin:$PATH
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+
+# Add brew autocomplete
+fpath=($HOME/.zsh/func $fpath)
+typeset -U fpath

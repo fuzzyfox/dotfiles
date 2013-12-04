@@ -1,1 +1,11 @@
+alias starwars='telnet towel.blinkenlights.nl'
+alias canhazip='curl ifconfig.me'
+alias trash='rm -fr ~/.Trash'
+alias truecrypt=/Applications/TrueCrypt.app/Contents/MacOS/TrueCrypt
+alias c='clear'
+alias gco='git co'
+alias gci='git ci'
+alias grb='git rb'
+alias :q='exit'
+alias reload='source ~/.zshrc'
 alias dotfiles='git --work-tree=$HOME --git-dir=$HOME/.dotfiles.git'
