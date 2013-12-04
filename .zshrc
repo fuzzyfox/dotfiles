@@ -74,7 +74,3 @@ export PATH=$(brew --prefix ruby)/bin:$PATH
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
-
-# Add brew autocomplete
-fpath=($HOME/.zsh/func $fpath)
-typeset -U fpath
