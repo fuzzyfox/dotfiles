@@ -74,3 +74,6 @@ export PATH=$(brew --prefix ruby)/bin:$PATH
 
 ### Added by the Heroku Toolbelt
 export PATH="/usr/local/heroku/bin:$PATH"
+
+# run archey on load
+archey -c
