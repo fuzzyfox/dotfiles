@@ -10,5 +10,4 @@ alias :q='exit'
 alias reload='clear && source ~/.zshrc'
 alias dotfiles='git --work-tree=$HOME --git-dir=$HOME/.dotfiles.git'
 alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
-alias redis-gui='redis-commander -p 6380 > ~/Library/Logs/Redis/redis-commander.log &'
-
+alias redis-commander='redis-commander -p 6380'

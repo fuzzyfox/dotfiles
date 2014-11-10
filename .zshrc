@@ -55,7 +55,7 @@ fi
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 
-plugins=(git extract node npm sublime terminalapp brew osx vagrant gibo)
+plugins=(git extract node npm sublime terminalapp brew osx vagrant gibo bower fasd)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -77,3 +77,7 @@ export PATH="/usr/local/heroku/bin:$PATH"
 
 # run archey on load
 archey -c
+
+# added by travis gem
+[ -f /Users/williamd/.travis/travis.sh ] && source /Users/williamd/.travis/travis.sh
+
