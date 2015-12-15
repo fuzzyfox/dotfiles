@@ -10,9 +10,12 @@
 [mergetool "sublime"]
 	cmd = subl -w $MERGED
 	trustExitCode = false
+[mergetool "atom"]
+	cmd = atom --wait $MERGED
+	trustExitCode = false
 [merge]
-	tool = sublime
+	tool = atom
 [core]
-	editor = subl -n -w
+	editor = atom --wait
 [help]
 	autocorrect = 5
