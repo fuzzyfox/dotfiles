@@ -1,13 +1,18 @@
-alias starwars='telnet towel.blinkenlights.nl'
-alias canhazip='curl ifconfig.me'
-alias trash='rm -fr ~/.Trash'
-alias truecrypt=/Applications/TrueCrypt.app/Contents/MacOS/TrueCrypt
+# Shortcuts
 alias c='clear'
-alias gco='git co'
-alias gci='git ci'
-alias grb='git rb'
 alias :q='exit'
+alias ll='ls -al'
+
+# Utils
 alias reload='clear && source ~/.zshrc'
-alias dotfiles='git --work-tree=$HOME --git-dir=$HOME/.dotfiles.git'
-alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
-alias redis-commander='redis-commander -p 6380'
+alias diff='git diff --no-index'
+alias flushdns='sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder'
+
+# Services
+alias pastebin='nc virtualhacker.net 9999'
+alias exifconfig='curl ifconfig.co'
+
+# Pre-configured Screens
+alias sacha-start='screen -c ~/.screen/sacha'
+alias stylus-start='screen -c ~/.screen/stylus'
+alias atom=atom-beta

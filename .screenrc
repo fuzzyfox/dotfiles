@@ -1,2 +1,7 @@
+startup_message off
+altscreen on
+
 term screen-256color
 shell -${SHELL}
+
+layout save default

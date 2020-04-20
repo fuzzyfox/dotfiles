@@ -1,83 +1,127 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+#
+# Tmux
+#
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-ZSH_THEME="doubleend"
-
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-
-if [ -f "$HOME/.zsh_aliases" ]; then
-	. "$HOME/.zsh_aliases"
+if [ -z "$TMUX" ] # When zsh is started attach to current tmux session or create a new one
+then
+    tmux attach -t TMUX || tmux new -s TMUX
 fi
 
-# aliases to quickly connect to remote machines
-if [ -f "$HOME/.zsh_remotes" ]; then
-	. "$HOME/.zsh_remotes"
+#
+# Neovim
+#
+
+export EDITOR="nvim"
+alias vim="nvim"
+
+#
+# Oh-my-zsh
+#
+
+export ZSH="$HOME/.oh-my-zsh"
+
+SPACESHIP_PROMPT_FIRST_PREFIX_SHOW=true # Show prefix before first line in prompt
+ZSH_THEME="spaceship" # Set theme
+
+plugins=(
+  git # https://github.com/robbyrussell/oh-my-zsh/wiki/Plugin:git
+  node
+  npm
+  nvm
+  docker
+  laravel
+  history-substring-search # ZSH port of Fish history search. Begin typing command, use up arrow to select previous use
+  zsh-autosuggestions # Suggests commands based on your history
+  zsh-completions # More completions
+  zsh-syntax-highlighting # Fish shell like syntax highlighting for Zsh
+  colored-man-pages # Self-explanatory
+  )
+autoload -U compinit && compinit # reload completions for zsh-completions
+
+source $ZSH/oh-my-zsh.sh # required
+
+# Colorize autosuggest
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=5'
+
+#
+# Spaceship-prompt
+#
+
+# Spaceship-prompt customization
+SPACESHIP_PROMPT_ORDER=(
+dir             # Current directory section
+user            # Username section
+host            # Hostname section
+git             # Git section (git_branch + git_status)
+time          # Time stampts section
+# hg            # Mercurial section (hg_branch  + hg_status)
+package       # Package version
+node          # Node.js section
+# ruby          # Ruby section
+# elixir        # Elixir section
+# xcode         # Xcode section
+# swift         # Swift section
+# golang        # Go section
+php           # PHP section
+# rust          # Rust section
+# haskell       # Haskell Stack section
+# julia         # Julia section
+docker        # Docker section
+# aws           # Amazon Web Services section
+# venv          # virtualenv section
+# conda         # conda virtualenv section
+# pyenv         # Pyenv section
+# dotnet        # .NET section
+# ember         # Ember.js section
+# kubecontext   # Kubectl context section
+exec_time       # Execution time
+line_sep        # Line break
+battery         # Battery level and status
+vi_mode         # Vi-mode indicator
+jobs            # Background jobs indicator
+# exit_code     # Exit code section
+char            # Prompt character
+)
+
+SPACESHIP_DIR_PREFIX="%{$fg[blue]%}┌─[%b "
+SPACESHIP_DIR_SUFFIX="%{$fg[blue]%} ] "
+SPACESHIP_CHAR_SYMBOL="%{$fg[blue]%}└─▪%b "
+
+#
+# Other
+#
+
+# This speeds up pasting w/ autosuggest
+# https://github.com/zsh-users/zsh-autosuggestions/issues/238
+pasteinit() {
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
+}
+
+pastefinish() {
+  zle -N self-insert $OLD_SELF_INSERT
+}
+zstyle :bracketed-paste-magic paste-init pasteinit
+zstyle :bracketed-paste-magic paste-finish pastefinish
+
+#
+# Aliases
+#
+if [ -f "$HOME/.dotfiles/.zsh_aliases" ]
+then
+	source $HOME/.dotfiles/.zsh_aliases
 fi
 
+#
 # Functions
-if [ -f "$HOME/.zsh_functions" ]; then
-	. "$HOME/.zsh_functions"
+#
+if [ -f "$HOME/.dotfiles/.zsh_functions" ]
+then
+	source $HOME/.dotfiles/.zsh_functions
 fi
 
-# Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
-
-# Comment this out to disable bi-weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
-
-# Uncomment to change how often before auto-updates occur? (in days)
-# export UPDATE_ZSH_DAYS=13
-
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
-
-# Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment following line if you want to disable command autocorrection
-# DISABLE_CORRECTION="true"
-
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment following line if you want to disable marking untracked files under
-# VCS as dirty. This makes repository status check for large repositories much,
-# much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-
-plugins=(git extract node npm sublime terminalapp brew osx vagrant gibo bower fasd)
-
-source $ZSH/oh-my-zsh.sh
-
-# set sublime as $EDITOR
-export EDITOR='subl -w'
-
-# Customize to your needs...
-#export PATH=$PATH:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/X11/bin
-export PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
-
-# add node modules to path
-export PATH=$PATH:/usr/local/share/npm/bin
-
-# add ruby gems to path
-export PATH=$(brew --prefix ruby)/bin:$PATH
-
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
-
-# run archey on load
-archey -c
-
-# added by travis gem
-[ -f /Users/williamd/.travis/travis.sh ] && source /Users/williamd/.travis/travis.sh
+#
+# Archey
+#
+archey
 
