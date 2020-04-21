@@ -27,7 +27,7 @@ if [ "$DIR" = "$dotfiles_dir" ]; then
 fi
 
 # Run noobs-term installation
-if which curl 2>/dev/null; then
+if which curl >/dev/null 2>&1; then
 	sh -c "$(curl -fsSL https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term.sh)"
 else
 	sh -c "$(wget -q https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term.sh -O -)"
@@ -41,10 +41,10 @@ if [ "$(uname)" = 'Darwin' ]; then
 	cp FiraCode/distr/otf/*.otf ~/Library/Fonts
 	rm -rf FiraCode
 elif [ "$(uname)" = 'Linux' ]; then
-	if which apt-get 2>/dev/null; then
+	if which apt-get >/dev/null 2>&1; then
 		sudo add-apt-repository -y ppa:aacebedo/fasd
 		sudo apt-get update
-		sudo apt-get install -y htop httpie php screen pandoc fonts-firacode
+		sudo apt-get install -y htop httpie php screen pandoc fonts-firacode neofetch
 	fi
 fi
 
