@@ -27,9 +27,9 @@ fi
 
 # Run noobs-term installation
 if which curl 2>/dev/null; then
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term-uninstall.sh)"
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term.sh)"
 else
-	sh -c "$(wget -q https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term-uninstall.sh -O -)"
+	sh -c "$(wget -q https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term.sh -O -)"
 fi
 
 # Install additional cli utilities
