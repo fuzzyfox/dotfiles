@@ -30,6 +30,7 @@ plugins=(
   nvm
   docker
   laravel
+  fasd
   history-substring-search # ZSH port of Fish history search. Begin typing command, use up arrow to select previous use
   zsh-autosuggestions # Suggests commands based on your history
   zsh-completions # More completions
