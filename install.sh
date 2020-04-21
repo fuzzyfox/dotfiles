@@ -12,6 +12,7 @@ symlink_dotfiles() {
 
 # Update dotfiles instead of install
 if [[ $* == *--update* ]]; then
+	cd "$DIR"
 	echo "Updating dotfiles"
 	git pull origin master
 	symlink_dotfiles
