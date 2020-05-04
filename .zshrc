@@ -5,6 +5,7 @@
 if [ -z "$TMUX" ] # When zsh is started attach to current tmux session or create a new one
 then
     tmux attach -t TMUX || tmux new -s TMUX
+    exit 0
 fi
 
 #
@@ -30,7 +31,9 @@ plugins=(
   nvm
   docker
   laravel
-  history-substring-search # ZSH port of Fish history search. Begin typing command, use up arrow to select previous use
+  extract
+  fasd
+  #history-substring-search # ZSH port of Fish history search. Begin typing command, use up arrow to select previous use
   zsh-autosuggestions # Suggests commands based on your history
   zsh-completions # More completions
   zsh-syntax-highlighting # Fish shell like syntax highlighting for Zsh
