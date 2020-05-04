@@ -124,7 +124,11 @@ then
 fi
 
 #
-# Archey
+# Archey / NeoFetch
 #
-archey
+if which archey >/dev/null 2>&1; then
+	archey
+elif which neofetch >/dev/null 2>&1; then
+	neofetch
+fi
 

@@ -12,6 +12,7 @@ symlink_dotfiles() {
 
 # Update dotfiles instead of install
 if [[ $* == *--update* ]]; then
+	cd "$DIR"
 	echo "Updating dotfiles"
 	git pull origin master
 	symlink_dotfiles
@@ -26,10 +27,10 @@ if [ "$DIR" = "$dotfiles_dir" ]; then
 fi
 
 # Run noobs-term installation
-if which curl 2>/dev/null; then
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term-uninstall.sh)"
+if which curl >/dev/null 2>&1; then
+	sh -c "$(curl -fsSL https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term.sh)"
 else
-	sh -c "$(wget -q https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term-uninstall.sh -O -)"
+	sh -c "$(wget -q https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term.sh -O -)"
 fi
 
 # Install additional cli utilities
@@ -40,10 +41,10 @@ if [ "$(uname)" = 'Darwin' ]; then
 	cp FiraCode/distr/otf/*.otf ~/Library/Fonts
 	rm -rf FiraCode
 elif [ "$(uname)" = 'Linux' ]; then
-	if which apt-get 2>/dev/null; then
+	if which apt-get >/dev/null 2>&1; then
 		sudo add-apt-repository -y ppa:aacebedo/fasd
 		sudo apt-get update
-		sudo apt-get install -y htop httpie php screen pandoc fonts-firacode
+		sudo apt-get install -y htop httpie php screen pandoc fonts-firacode neofetch
 	fi
 fi
 
