@@ -108,6 +108,11 @@ zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
 
 #
+# Path
+#
+export PATH=$PATH:/usr/local/sbin:$HOME/.local/bin
+
+#
 # Aliases
 #
 if [ -f "$HOME/.dotfiles/.zsh_aliases" ]

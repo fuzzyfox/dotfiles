@@ -5,7 +5,7 @@ My dotfiles. dotfiles.github.io for more info on what these are.
 ## Installation
 
 ```bash
-$ git clone git@github.com:fuzzyfox/dotfiles.git
+$ git clone https://github.com/fuzzyfox/dotfiles.git
 $ cd dotfiles
 $ ./install.sh
 ```
