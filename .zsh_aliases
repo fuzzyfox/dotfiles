@@ -4,15 +4,16 @@ alias :q='exit'
 alias ll='ls -al'
 
 # Utils
-alias reload='clear && source ~/.zshrc'
+alias reload='reset && clear && exec $SHELL'
 alias diff='git diff --no-index'
 alias flushdns='sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder'
+alias beep='beep >/dev/null 2>&1 || powershell.exe "[console]::beep(1000,500);[console]::beep(1000,500);[console]::beep(1000,500);" >/dev/null 2>&1 || echo -ne "\a"';
 
 # Services
 alias pastebin='nc virtualhacker.net 9999'
 alias exifconfig='curl ifconfig.co'
 
-# Pre-configured Screens
-alias sacha-start='screen -c ~/.screen/sacha'
-alias stylus-start='screen -c ~/.screen/stylus'
-alias atom=atom-beta
+# Boat
+alias boat='./bin/boat'
+alias drop-cache='sudo bash -c "~/drop-cache"'
+
