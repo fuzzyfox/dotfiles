@@ -33,7 +33,22 @@ else
 	sh -c "$(wget -q https://raw.githubusercontent.com/aaronkjones/noobs-term/master/noobs-term.sh -O -)"
 fi
 
+# Install git-trim
+if which curl >/dev/null 2>&1; then
+	curl https://raw.githubusercontent.com/jasonmccreary/git-trim/main/git-trim -o $HOME/.local/bin/git-trim
+else
+	wget -q https://raw.githubusercontent.com/jasonmccreary/git-trim/main/git-trim -O $HOME/.local/bin/git-trim
+fi
+chmod +x $HOME/.local/bin/git-trim
+
 # Install additional cli utilities
+if which curl >/dev/null 2>&1; then
+	curl https://raw.githubusercontent.com/jasonmccreary/git-trim/main/git-trim -o $HOME/.local/bin/git-trim
+else
+	wget -q https://raw.githubusercontent.com/jasonmccreary/git-trim/main/git-trim -O $HOME/.local/bin/git-trim
+fi
+chmod +x $HOME/.local/bin/git-trim
+
 if [ "$(uname)" = 'Darwin' ]; then
 	brew install htop httpie archey fasd gcc php composer gibo pandoc screen
 	echo "Installing FiraCode"
@@ -56,11 +71,6 @@ echo "Linking additional configs"
 symlink_dotfiles
 
 
-echo ""
-echo "[OPTIONAL] Add the following line to ~/.ssh/config to enable VCS specific ssh configurations"
-echo ""
-echo "	Include ~/.dotfiles/.ssh/config"
-echo ""
 echo "---------------------"
 echo "Installation complete"
 echo "---------------------"

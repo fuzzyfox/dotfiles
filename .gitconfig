@@ -11,3 +11,5 @@
 	editor = vim 
 [help]
 	autocorrect = 5
+[gt]
+	exclude = develop main master production prod

@@ -30,9 +30,11 @@ plugins=(
   npm
   nvm
   docker
+  docker-compose
   laravel
   extract
   fasd
+  aws
   #history-substring-search # ZSH port of Fish history search. Begin typing command, use up arrow to select previous use
   zsh-autosuggestions # Suggests commands based on your history
   zsh-completions # More completions
@@ -128,11 +130,17 @@ then
 	source $HOME/.dotfiles/.zsh_functions
 fi
 
+#
+# Homebrew
+#
 if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]
 then
 	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
 
+#
+# WSL
+#
 if grep -q microsoft /proc/version
 then
 	# Export WSL host IP
@@ -165,6 +173,9 @@ then
 	else
 		export DISPLAY=
 	fi
+
+	# Set default browser to host
+	export BROWSER=wslview
 fi
 
 #
@@ -172,5 +183,18 @@ fi
 #
 if which neofetch >/dev/null 2>&1; then
 	neofetch
+fi
+
+#
+# LESS COLORS
+#
+export LESS='-R'
+export LESSOPEN='|~/.lessfilter %s'
+
+#
+# Local Machine Only
+#
+if [ -f "$HOME/.zshrc.local" ]; then
+	source "$HOME/.zshrc.local"
 fi
 
