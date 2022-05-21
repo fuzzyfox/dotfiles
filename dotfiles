@@ -1,0 +1,413 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+trap cleanup SIGINT SIGTERM ERR EXIT
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+script_name=$(basename "${BASH_SOURCE[0]}")
+dotfiles_dir=${dotfiles_dir:-"$HOME/.dotfiles"}
+
+if [ -d "$dotfiles_dir" ];then
+  dotfiles=$(find "$script_dir" -type f -wholename "$script_dir/symlinks/*" -exec realpath {} \;)
+fi
+
+apt_repos="ppa:aacebedo/fasd"
+
+pkg_dependencies="curl \
+fasd \
+git \
+git-extras \
+htop \
+httpie \
+neofetch \
+nudoku \
+pandoc \
+screen \
+tmux \
+wget \
+zsh"
+
+brew_dependencies=(
+  "nvim neovim"
+  "pipes.sh pipes-sh"
+)
+
+zsh_plugins=(
+  "https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+  "https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+  "https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-history-substring-search"
+  "https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-completions"
+  "https://github.com/spaceship-prompt/spaceship-prompt.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/spaceship-prompt"
+)
+
+# ==============================================================================
+# Usage
+# ==============================================================================
+
+usage() {
+  cat <<EOF
+Usage: $script_name [-h] [-v] [-f] [--no-color] command
+
+A custom dotfiles manager for custom sake.
+
+Available commands:
+
+install     Install the dotfiles and their dependencies.
+backup      Backup existing dotfiles into $dotfiles_dir/backups/*
+restore     Restore backup dotfiles from $dotfiles_dir/backups/*
+link        Symlink dotfiles from $dotfiles_dir/symlinks/* into $HOME/*
+update      Update dependencies/frameworks/plugins/etc...
+add <file>  Add a new file to the dotfiles $dotfiles_dir/symlink/* directory
+
+
+Available options:
+
+-h,  --help      Print this help and exit
+-v,  --verbose   Print some script debug info
+-vv, --debug     Print full script debug info
+     --no-color   Output without colors.
+EOF
+  exit
+}
+
+cleanup() {
+  trap - SIGINT SIGTERM ERR EXIT
+  # script cleanup here
+}
+
+if [ $# -eq 0 ]; then
+  usage
+fi
+
+# ==============================================================================
+# Colors & Output utilities
+# ==============================================================================
+
+setup_colors() {
+  if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
+    NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' YELLOW='\033[1;33m'
+  else
+    # shellcheck disable=SC2034
+    NOFORMAT='' RED='' GREEN='' ORANGE='' BLUE='' PURPLE='' CYAN='' YELLOW=''
+  fi
+}
+
+msg() {
+  echo >&2 -e "${1-}"
+}
+
+die() {
+  local msg=${1-""}
+  local code=${2-1} # default exit status 1
+  msg "$msg"
+  exit "$code"
+}
+
+warn() {
+  msg "${YELLOW}WARNING:${NOFORMAT} ${1-}"
+}
+
+error() {
+  msg "${RED}ERROR:${NOFORMAT} ${1-}"
+}
+
+confirm() {
+  msg ''
+  # call with a prompt string or use a default
+  read -r -p "${1:-Are you sure?} [y/N]: " response
+  msg ''
+  case "$response" in
+  [yY][eE][sS] | [yY])
+    true
+    ;;
+  *)
+    false
+    ;;
+  esac
+}
+
+# ==============================================================================
+# Parse command parameters
+# ==============================================================================
+
+parse_params() {
+  # default values of variables set from params
+  verbose=0
+  debug=0
+
+  while :; do
+    case "${1-}" in
+    -h | --help) usage ;;
+    -v | --verbose) verbose=1 ;;
+    -vv | --debug)
+      set -x
+      # shellcheck disable=SC2034
+      verbose=1
+      # shellcheck disable=SC2034
+      debug=1
+      ;;
+    --no-color) NO_COLOR=1 ;;
+    -?*) die "Unknown option: $1" ;;
+    *) break ;;
+    esac
+    shift
+  done
+
+  # shellcheck disable=SC2034
+  args=("$@")
+
+  # check required params and arguments
+  # [[ -z "${param-}" ]] && die "Missing required parameter: param"
+  # [[ ${#args[@]} -eq 0 ]] && die "Missing script arguments"
+
+  return 0
+}
+
+parse_params "$@"
+setup_colors
+
+# ==============================================================================
+# Check for supported environment
+# ==============================================================================
+
+UNAMEOUT="$(uname -s)"
+
+# Verify operating system is supported...
+case "${UNAMEOUT}" in
+Linux*) MACHINE=linux ;;
+Darwin*) MACHINE=mac ;;
+*) MACHINE="UNKNOWN" ;;
+esac
+
+if [ "$MACHINE" == "UNKNOWN" ]; then
+  error "Unsupported operating system [$(uname -s)]. $script_name supports macOS, Linux, and Windows (WSL2)."
+  die
+fi
+
+if [ "$MACHINE" == "linux" ]; then
+  export SEDCMD="sed -i"
+elif [ "$MACHINE" == "mac" ]; then
+  export SEDCMD="sed -i .bak"
+fi
+
+if [ "$MACHINE" == "linux" ] && (uname -a | grep -q microsoft); then
+  MACHINE=wsl
+fi
+
+# ==============================================================================
+# Utilities
+# ==============================================================================
+
+as_root() {
+  if [[ $(id -u) -eq 0 ]]; then
+    "$@"
+  else
+    sudo "$@"
+  fi
+}
+
+symlink_dotfile() {
+  dotfile=$1
+  target="$HOME/$(echo "$dotfile" | sed -e "s#^$dotfiles_dir/symlinks/##")"
+
+  if [ ! -d "$(dirname "$target")" ]; then
+    mkdir -p "$(dirname "$target")"
+  fi
+
+  ln -sf "$dotfile" "$target"
+
+  echo "$target"
+}
+
+symlink_dotfiles() {
+  msg "Creating symlinks..."
+  for dotfile in $dotfiles; do
+    symlink_dotfile "$dotfile"
+  done
+}
+
+backup_dotfile() {
+  existing=$1
+  target="$dotfiles_dir/backups/$(echo "$existing" | sed -e "s#^$HOME/##")"
+
+  if [ -f "$existing" ]; then
+    mkdir -p "$(dirname "$target")"
+    cp -Lf "$existing" "$target"
+  fi
+
+  echo "$target"
+}
+
+backup_dotfiles() {
+  msg "Backing up existing dotfiles..."
+  for dotfile in $dotfiles; do
+    backup_dotfile "$dotfile"
+  done
+}
+
+restore_dotfiles() {
+  msg "Restoring backups..."
+  backups=$(find "$dotfiles_dir" -type f -wholename "$dotfiles_dir/backups/*" -exec realpath {} \;)
+  for backup in $backups; do
+    target="$HOME/$(echo "$backup" | sed -e "s#^$dotfiles_dir/backups/##")"
+    mkdir -p "$(dirname "$target")"
+    if [ -f "$target" ]; then
+      rm "$target"
+    fi
+    cp -Lf "$backup" "$target"
+  done
+}
+
+install_homebrew() {
+  if ! command -v brew >/dev/null; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo "isntall brew"
+  fi
+}
+
+install_pkg_dependencies() {
+  for repo in $apt_repos; do
+    as_root apt-add-repository -y $repo
+  done
+
+  as_root apt update
+  as_root apt upgrade -y
+  # shellcheck disable=SC2086
+  as_root apt install -y $pkg_dependencies
+}
+
+install_brew_deps() {
+  for dep in "${brew_dependencies[@]}"; do
+    # shellcheck disable=SC2162
+    read -a tuple <<<"$dep"
+    if ! command -v "${tuple[0]}" >/dev/null; then
+      echo "brew install ${tuple[1]}"
+    fi
+  done
+}
+
+install_omz() {
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  else
+    "$HOME/.oh-my-zsh/tools/upgrade.sh"
+  fi
+}
+
+install_zsh_plugins() {
+  for plugin in "${zsh_plugins[@]}"; do
+    # shellcheck disable=SC2162
+    read -a tuple <<<"$plugin"
+    git clone --depth=1 "${tuple[0]}" "${tuple[1]}"
+  done
+}
+
+update_zsh_plugins() {
+  p=$(pwd)
+
+  for plugin in "${zsh_plugins[@]}"; do
+    # shellcheck disable=SC2162
+    read -a tuple <<<"$plugin"
+    cd "${tuple[1]}"
+    git pull origin "$(git branch --show-current)" --rebase
+  done
+
+  cd "$p"
+}
+
+install_tmux_pkg_manager() {
+  git clone https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+}
+
+install_vim_pkg_manager() {
+  curl -sfLo "$HOME/.local/share/nvim/site/autoload/plug.vim" --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  mkdir -p "$HOME/.config/nvim"
+  nvim +PlugInstall +qa || echo "Something went wrong installing Neovim plugins. Check init.vim for errors and try again."
+}
+
+custom_installers() {
+  installers=$(find "$script_dir/installers" -type f -wholename "$script_dir/installers/*.sh" -exec realpath {} \;)
+  for installer in $installers ; do
+    chmod +x "$installer"
+    "$installer"
+  done
+}
+
+symlink_spaceship_prompt() {
+  ln -s "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/spaceship-prompt/spaceship.zsh-theme" "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/spaceship.zsh-theme"
+}
+
+# ==============================================================================
+# Commands
+# ==============================================================================
+
+install() {
+  backup_dotfiles
+
+  install_pkg_dependencies
+
+  install_homebrew
+  install_brew_deps
+
+  install_omz
+  install_zsh_plugins
+
+  symlink_spaceship_prompt
+
+  symlink_dotfiles
+
+  mkdir -p "$HOME/.local/bin"
+  mkdir -p "$HOME/Downloads"
+
+  custom_installers
+}
+
+# ==============================================================================
+# Detect first run
+# ==============================================================================
+
+if [ "$script_dir" != "$dotfiles_dir" ]; then
+  if confirm "Install dotfiles for the first time?"; then
+    mkdir -p "$(dirname "$dotfiles_dir")"
+    mv "$script_dir" "$dotfiles_dir"
+    "$dotfiles_dir/$script_name" install
+  else
+    die
+  fi
+
+  exit
+fi
+
+if [ "$1" == "install" ]; then
+  install
+
+elif [ "$1" == "backup" ]; then
+  backup_dotfiles
+
+elif [ "$1" == "restore" ]; then
+  restore_dotfiles
+
+elif [ "$1" == "link" ]; then
+  symlink_dotfiles
+
+elif [ "$1" == "update" ]; then
+  symlink_dotfiles
+  install_omz
+  update_zsh_plugins
+
+elif [ "$1" == "add" ]; then
+  shift 1
+
+  for file in "$@"; do
+    file="$(realpath "$file")"
+    backup=$(backup_dotfile "$file")
+    symlink="$script_dir/symlinks/$(echo "$backup" | sed -e "s#^$script_dir/backups/##")"
+    mkdir -p "$(dirname "$symlink")"
+    cp -Lf "$backup" "$symlink"
+    rm -f "$file"
+    symlink_dotfile "$symlink"
+  done
+
+else
+  usage
+fi

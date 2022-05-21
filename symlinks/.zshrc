@@ -26,6 +26,7 @@ ZSH_THEME="spaceship" # Set theme
 
 plugins=(
   git # https://github.com/robbyrussell/oh-my-zsh/wiki/Plugin:git
+  git-extras
   node
   npm
   nvm
@@ -117,17 +118,17 @@ export PATH=$PATH:/usr/local/sbin:$HOME/.local/bin
 #
 # Aliases
 #
-if [ -f "$HOME/.dotfiles/.zsh_aliases" ]
+if [ -f "$HOME/.zsh_aliases" ]
 then
-	source $HOME/.dotfiles/.zsh_aliases
+	source $HOME/.zsh_aliases
 fi
 
 #
 # Functions
 #
-if [ -f "$HOME/.dotfiles/.zsh_functions" ]
+if [ -f "$HOME/.zsh_functions" ]
 then
-	source $HOME/.dotfiles/.zsh_functions
+	source $HOME/.zsh_functions
 fi
 
 #
@@ -148,7 +149,7 @@ then
 
 	# Configure ssh forwarding
 	export SSH_AUTH_SOCK=$HOME/.ssh/agent.sock
-	
+
 	# need `ps -ww` to get non-truncated command for matching
 	# use square brackets to generate a regex match for the process we want, but that doesnt match the grep process
 	ALREADY_RUNNING=$(ps -auxww | grep -q "[n]piperelay.exe -ei -s //./pipe/openssh-ssh-agent"; echo $?)
@@ -198,3 +199,7 @@ if [ -f "$HOME/.zshrc.local" ]; then
 	source "$HOME/.zshrc.local"
 fi
 
+#
+# Variables
+#
+export WTTR_PARAMS="2 q F"

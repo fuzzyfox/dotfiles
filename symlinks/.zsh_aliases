@@ -4,13 +4,16 @@ alias :q='exit'
 alias ll='ls -al'
 
 # Utils
-alias reload='reset && clear && exec $SHELL'
+alias reload="reset && clear && exec $SHELL"
 alias diff='git diff --no-index'
 alias flushdns='sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder'
+alias dotfiles="$HOME/.dotfiles/dotfiles"
+alias readme='npx readme-md-generator'
 
 # Services
 alias pastebin='nc virtualhacker.net 9999'
 alias exifconfig='curl ifconfig.co'
+alias weather='wttr'
 
 # Laravel
 alias sail='./vendor/bin/sail'
