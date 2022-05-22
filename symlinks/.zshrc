@@ -92,6 +92,7 @@ char            # Prompt character
 SPACESHIP_DIR_PREFIX="%{$fg[blue]%}┌─[%b "
 SPACESHIP_DIR_SUFFIX="%{$fg[blue]%} ] "
 SPACESHIP_CHAR_SYMBOL="%{$fg[blue]%}└─▪%b "
+SPACESHIP_CHAR_SYMBOL_ROOT=$SPACESHIP_CHAR_SYMBOL
 
 #
 # Other

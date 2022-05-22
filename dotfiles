@@ -13,13 +13,15 @@ fi
 
 apt_repos="ppa:aacebedo/fasd"
 
-pkg_dependencies="curl \
+pkg_dependencies="build-essential \
+curl \
 fasd \
 git \
 git-extras \
 htop \
 httpie \
 neofetch \
+netcat \
 nudoku \
 pandoc \
 ranger \
