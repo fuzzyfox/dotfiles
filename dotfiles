@@ -349,6 +349,8 @@ install() {
   install_homebrew
   install_brew_deps
 
+  install_tmux_pkg_manager
+  install_vim_pkg_manager
   install_omz
   install_zsh_plugins
 
