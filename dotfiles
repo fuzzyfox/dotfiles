@@ -266,7 +266,17 @@ restore_dotfiles() {
 install_homebrew() {
   if ! command -v brew >/dev/null; then
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    eval "$("${HOMEBREW_PREFIX}/bin/brew" shellenv)"
+    if [ "$MACHINE" == "linux" ] || [ "$MACHINE" == "wsl" ];then
+      eval "$("/home/linuxbrew/.linuxbrew/bin/brew" shellenv)"
+    elif [ "$MACHINE" == "mac" ]; then
+        if [ "$(/usr/bin/uname -m)" == "arm64" ];then
+          # On ARM macOS
+          eval "$("/opt/homebrew/bin/brew" shellenv)"
+        else
+          # On Intel macOS
+          eval "$("/usr/local/bin/brew" shellenv)"
+        fi
+      fi
   fi
 }
 
