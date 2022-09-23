@@ -2,7 +2,7 @@
 # Tmux
 #
 
-if [ -z "$TMUX" ] # When zsh is started attach to current tmux session or create a new one
+if [ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ] && [ -z "$TMUX" ] # When zsh is started attach to current tmux session or create a new one
 then
     tmux attach -t TMUX || tmux new -s TMUX
     exit 0

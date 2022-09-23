@@ -35,6 +35,7 @@ zsh"
 brew_dependencies=(
   "nvim neovim"
   "pipes.sh pipes-sh"
+  "btm bottom"
 )
 
 zsh_plugins=(
