@@ -117,6 +117,11 @@ zstyle :bracketed-paste-magic paste-finish pastefinish
 export PATH=$PATH:/usr/local/sbin:$HOME/.local/bin
 
 #
+# Timezone
+#
+export TZ=${TZ:-$(cat /etc/timezone || echo 'UTC')}
+
+#
 # Aliases
 #
 if [ -f "$HOME/.zsh_aliases" ]
@@ -138,6 +143,14 @@ fi
 if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]
 then
 	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
+
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
 fi
 
 #
@@ -204,3 +217,13 @@ fi
 # Variables
 #
 export WTTR_PARAMS="2 q F"
+
+#
+# Completions
+#
+autoload -U +X bashcompinit && bashcompinit
+
+if command -v brew &> /dev/null && command -v nomad &> /dev/null
+then
+  complete -o nospace -C "/home/linuxbrew/.linuxbrew/Cellar/nomad/$(nomad --version | awk '/Nomad/ {gsub("Nomad v", ""); print $1}')/bin/nomad" nomad
+fi

@@ -24,4 +24,5 @@ alias drop-cache='sudo bash -c "~/drop-cache"'
 
 # WSL
 alias beep='beep >/dev/null 2>&1 || powershell.exe "[console]::beep(1000,500);[console]::beep(1000,500);[console]::beep(1000,500);" >/dev/null 2>&1 || echo -ne "\a"';
-alias sidekick='xfsettingsd --sm-client-disable; xfce4-panel --sm-client-disable --disable-wm-check'
+alias sidekick='export GDK_BACKEND=x11;xfsettingsd --sm-client-disable >/dev/null 2>&1; xfce4-panel --sm-client-disable --disable-wm-check >/dev/null 2>&1 &'
+
