@@ -11,11 +11,10 @@ if [ -d "$dotfiles_dir" ];then
   dotfiles=$(find "$script_dir" -type f -wholename "$script_dir/symlinks/*" -exec realpath {} \;)
 fi
 
-apt_repos="ppa:aacebedo/fasd"
+apt_repos=""
 
 pkg_dependencies="build-essential \
 curl \
-fasd \
 file \
 git \
 git-extras \
@@ -28,8 +27,12 @@ pandoc \
 procps \
 ranger \
 screen \
+socat \
 tmux \
+unzip \
 wget \
+zip \
+zoxide \
 zsh"
 
 brew_dependencies=(
@@ -300,7 +303,7 @@ install_brew_deps() {
     # shellcheck disable=SC2162
     read -a tuple <<<"$dep"
     if ! command -v "${tuple[0]}" >/dev/null; then
-      echo "brew install ${tuple[1]}"
+      brew install "${tuple[1]}"
     fi
   done
 }

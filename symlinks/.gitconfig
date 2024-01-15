@@ -13,3 +13,5 @@
 	autocorrect = 5
 [gt]
 	exclude = develop main master production prod
+[init]
+	defaultBranch = main

@@ -34,13 +34,13 @@ plugins=(
   docker-compose
   laravel
   extract
-  fasd
   aws
   #history-substring-search # ZSH port of Fish history search. Begin typing command, use up arrow to select previous use
   zsh-autosuggestions # Suggests commands based on your history
   zsh-completions # More completions
   zsh-syntax-highlighting # Fish shell like syntax highlighting for Zsh
   colored-man-pages # Self-explanatory
+  zoxide
   )
 autoload -U compinit && compinit # reload completions for zsh-completions
 
@@ -83,7 +83,6 @@ docker        # Docker section
 exec_time       # Execution time
 line_sep        # Line break
 battery         # Battery level and status
-vi_mode         # Vi-mode indicator
 jobs            # Background jobs indicator
 # exit_code     # Exit code section
 char            # Prompt character
@@ -92,6 +91,8 @@ char            # Prompt character
 SPACESHIP_DIR_PREFIX="%{$fg[blue]%}┌─[%b "
 SPACESHIP_DIR_SUFFIX="%{$fg[blue]%} ] "
 SPACESHIP_CHAR_SYMBOL="%{$fg[blue]%}└─▪%b "
+SPACESHIP_CHAR_SYMBOL_SUCCESS="%{$fg[blue]%}└─%b%{$fg[green]%}▪%b "
+SPACESHIP_CHAR_SYMBOL_FAILURE="%{$fg[blue]%}└─%b%{$fg[red]%}▪%b "
 SPACESHIP_CHAR_SYMBOL_ROOT=$SPACESHIP_CHAR_SYMBOL
 
 #
