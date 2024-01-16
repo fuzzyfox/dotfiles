@@ -32,13 +32,14 @@ tmux \
 unzip \
 wget \
 zip \
-zoxide \
 zsh"
 
 brew_dependencies=(
   "nvim neovim"
   "pipes.sh pipes-sh"
   "btm bottom"
+  "zoxide zoxide"
+  "fzf fzf"
 )
 
 zsh_plugins=(
