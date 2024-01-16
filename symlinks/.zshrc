@@ -9,6 +9,22 @@ then
 fi
 
 #
+# Homebrew
+#
+if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]
+then
+	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
+
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
+
+#
 # Neovim
 #
 
@@ -136,22 +152,6 @@ fi
 if [ -f "$HOME/.zsh_functions" ]
 then
 	source $HOME/.zsh_functions
-fi
-
-#
-# Homebrew
-#
-if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]
-then
-	eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
-fi
-
-if type brew &>/dev/null
-then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-
-  autoload -Uz compinit
-  compinit
 fi
 
 #
