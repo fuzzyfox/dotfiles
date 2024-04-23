@@ -16,7 +16,8 @@ alias exifconfig='curl ifconfig.co'
 alias weather='wttr'
 
 # Laravel
-alias sail='./vendor/bin/sail'
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
+alias vapor='./vendor/bin/sail bin vapor'
 
 # Boat
 alias boat='./bin/boat'

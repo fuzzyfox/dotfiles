@@ -2,10 +2,14 @@
 # Tmux
 #
 
-if [ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ] && [ -z "$TMUX" ] # When zsh is started attach to current tmux session or create a new one
+# When zsh is started attach to current tmux session or create a new one
+if [[ $- == *i* ]] && [ -z "$INTELLIJ_ENVIRONMENT_READER" ] && [ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ] && [ -z "$TMUX" ]
 then
-    tmux attach -t TMUX || tmux new -s TMUX
-    exit 0
+	alias attach='tmux attach -t $USER || tmux new -s $USER;exit $?'
+	# tmux attach -t TMUX || tmux new -s TMUX
+	# exit 0
+else
+	alias attach='echo "already attached"'
 fi
 
 #
@@ -51,6 +55,7 @@ plugins=(
   laravel
   extract
   aws
+  fzf
   #history-substring-search # ZSH port of Fish history search. Begin typing command, use up arrow to select previous use
   zsh-autosuggestions # Suggests commands based on your history
   zsh-completions # More completions
