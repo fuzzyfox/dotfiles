@@ -40,6 +40,7 @@ brew_dependencies=(
   "btm bottom"
   "zoxide zoxide"
   "fzf fzf"
+  "wrk wrk"
 )
 
 zsh_plugins=(
