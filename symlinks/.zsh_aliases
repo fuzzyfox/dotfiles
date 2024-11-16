@@ -18,6 +18,9 @@ alias weather='wttr'
 # Laravel
 alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
 alias vapor='./vendor/bin/sail bin vapor'
+alias tinker='./vendor/bin/sail tinker'
+alias artisan='./vendor/bin/sail artisan'
+alias art='artisan'
 
 # Boat
 alias boat='./bin/boat'
