@@ -1,9 +1,17 @@
 #
+# Jetbrains Detection
+#
+IS_JETBRAINS_ENV=false
+if [[ -n "$INTELLIJ_ENVIRONMENT_READER" || "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]
+then
+	IS_JETBRAINS_ENV=true
+fi
+
+
+#
 # Tmux
 #
-
-# When zsh is started attach to current tmux session or create a new one
-if [[ $- == *i* ]] && [ -z "$INTELLIJ_ENVIRONMENT_READER" ] && [ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ] && [ -z "$TMUX" ]
+if [[ $- == *i* ]] && [[ $IS_JETBRAINS_ENV != true ]] && [ -z "$TMUX" ]
 then
 	alias attach='tmux attach -t $USER || tmux new -s $USER;exit $?'
 	# tmux attach -t TMUX || tmux new -s TMUX
@@ -54,6 +62,7 @@ plugins=(
   docker-compose
   laravel
   extract
+  opencode
   aws
   fzf
   #history-substring-search # ZSH port of Fish history search. Begin typing command, use up arrow to select previous use
@@ -62,7 +71,13 @@ plugins=(
   zsh-syntax-highlighting # Fish shell like syntax highlighting for Zsh
   colored-man-pages # Self-explanatory
   zoxide
-  )
+)
+
+if [[ $IS_JETBRAINS_ENV != true ]]
+then
+  plugins=(ssh-agent "${plugins[@]}")
+fi
+
 autoload -U compinit && compinit # reload completions for zsh-completions
 
 source $ZSH/oh-my-zsh.sh # required

@@ -41,6 +41,7 @@ brew_dependencies=(
   "zoxide zoxide"
   "fzf fzf"
   "wrk wrk"
+  "rg ripgrep"
 )
 
 zsh_plugins=(
